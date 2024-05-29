@@ -2,9 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Pretender;
 using Pretender.Matcher;
-using YamlDotNet.Serialization;
-using YamlDotNet.Serialization.NamingConventions;
-
 namespace Api;
 
 public class HttpAnyAttribute : HttpMethodAttribute
@@ -34,7 +31,7 @@ public class AnyVerbController : ControllerBase
     public async Task<IActionResult> HandleAnyRequest()
     {
         var r = HttpContext.Request;
-        var request = new RequestInput()
+        var request = new RequestInput
         {
             Path = r.Path,
             Headers = r.Headers.ToDictionary(x => x.Key, x => x.Value.ToString()),
@@ -45,20 +42,14 @@ public class AnyVerbController : ControllerBase
         };
 
         var mock = await _matcher.Match(request);
-        return Ok("This endpoint accepts any HTTP verb.");
+        return Ok(mock);
     }
     
     [HttpPost]
     [Route("test")]
     public IActionResult HandleRequest()
     {
-        var path = HttpContext.Request.Path;
-        var headers = HttpContext.Request.Headers;
-        var query = HttpContext.Request.Query;
-        var contentType = HttpContext.Request.ContentType;
-        var method= HttpContext.Request.Method;
-        
-        
-        return Ok("This endpoint accepts any HTTP verb.");
+        // Potential config endpoint
+        return Ok();
     }
 }
