@@ -1,0 +1,10 @@
+config:
+  mocks:
+    - name: "mock1"
+      request:
+        path: "/test/one"
+        method: "post"
+        match:
+          params:
+            - key: scott
+              value: bl
