@@ -1,7 +1,10 @@
+using System.Web;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Pretender;
 using Pretender.Matcher;
+using Pretender.Responder;
+
 namespace Api;
 
 public class HttpAnyAttribute : HttpMethodAttribute
@@ -21,10 +24,14 @@ public class HttpAnyAttribute : HttpMethodAttribute
 public class AnyVerbController : ControllerBase
 {
     private readonly IMatcher _matcher;
+    private readonly IResponder _responder;
 
-    public AnyVerbController(IMatcher matcher)
+    public AnyVerbController(
+        IMatcher matcher, 
+        IResponder responder)
     {
         _matcher = matcher;
+        _responder = responder;
     }
     [HttpAny]
     [Route("{*path}")]
@@ -33,7 +40,7 @@ public class AnyVerbController : ControllerBase
         var r = HttpContext.Request;
         var request = new RequestInput
         {
-            Path = r.Path,
+            Path = HttpUtility.UrlDecode(r.Path.ToString()).Split("/api/AnyVerb").Last(),
             Headers = r.Headers.ToDictionary(x => x.Key, x => x.Value.ToString()),
             QueryParams = r.Query.ToDictionary(x => x.Key, x => x.Value.ToString()),
             ContentType = r.ContentType,
@@ -42,7 +49,13 @@ public class AnyVerbController : ControllerBase
         };
 
         var mock = await _matcher.Match(request);
-        return Ok(mock);
+        var response = _responder.CreateResponse(mock.Response);
+        return new ContentResult
+        {
+            Content = response.Content,
+            ContentType = "application/json",
+            StatusCode = response.StatusCode
+        };
     }
     
     [HttpPost]

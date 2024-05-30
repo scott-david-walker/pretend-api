@@ -1,6 +1,7 @@
-using Api;using Pretender;
+using Pretender;
 using Pretender.Configuration;
 using Pretender.Matcher;
+using Pretender.Responder;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
@@ -12,6 +13,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 
+builder.Services.AddScoped<IMatcher, Matcher>();
+builder.Services.AddScoped<IResponder, Responder>();
 builder.Services.AddSingleton<IMatcher, Matcher>();
 
 var yml = File.ReadAllText("./test.yaml");

@@ -9,3 +9,11 @@ config:
           params:
             - key: scott
               value: bl
+      response:
+        status_code: 501
+        body:
+          from_file: "test.json"
+          content: '{"message": "Hello, world!", "nested": {"key1": "value1", "key2": [{"subkey": "value2"}, {"subkey": "value3"}]}}'
+#          replace:
+#            - path: "nested.key2[0].subkey"
+#              value: "new_value"
